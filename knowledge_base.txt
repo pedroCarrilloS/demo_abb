@@ -1,0 +1,48 @@
+# This knowledge base will check connectivity issues between robot and our monitoring tool
+
+If the monitoring tool is not storing data follow this steps:
+
+1. Check the connection between the robot and the endpoint:
+
+  Open a terminal at your edge machine and run
+  "ping -c 1 $ROBOT_IP"
+  (if the robot doesn't have ping service opened, test with "telnet $ROBOT_IP $PORT")
+
+  If we have a response like:
+
+    PING $ROBOT_IP ($ROBOT_IP) 56(84) bytes of data.
+    64 bytes from $ROBOT_IP: icmp_seq=1 ttl=64 time=0.017 ms
+
+    --- $ROBOT_IP ping statistics ---
+    1 packets transmitted, 1 received, 0% packet loss, time 0ms
+    rtt min/avg/max/mdev = 0.017/0.017/0.017/0.000 ms
+
+  Then we have connection from the edge machine to the robot. Continue at step 2.
+
+  If we don't have the expected response, make sure the robot is on, and there is no issues in your company network.
+
+2. Check if the edge machine has the ports open
+
+   Run this command at your terminal:
+
+   "netstat -onaput | grep $SERVICE_PORT"
+
+   You should see the service port status as LISTEN or ESTABLISHED. Check also if the firewall rules are allowing this connection running this command:
+
+   "iptables -L | grep $SERVICE_PORT"
+
+   You should see something like this:
+
+   ACCEPT     tcp  --  anywhere             172.17.0.2           tcp dpt:$SERVICE_PORT
+
+
+   If you cannot see the expected output, make sure the docker is running running:
+
+   "docker ps"
+
+   You should see your container with the $SERVICE_PORT exposed like "0.0.0.0:$SERVICE_PORT->$SERVICE_PORT/tcp" If you miss this output, please relaunch your docker container with:
+
+   docker-compose up
+
+   If after one minute, the connection is not working, please contact our support team.
+
