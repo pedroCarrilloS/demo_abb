@@ -1,0 +1,11 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  tasks: 
+  - name: install chromium
+    apt: 
+      name: chromium-browser
+      state: present
+    become: yes
+    become_user: root
+
